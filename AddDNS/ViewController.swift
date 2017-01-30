@@ -7,15 +7,17 @@
 //
 
 import UIKit
+import Foundation
 import NetworkExtension
 
 class ViewController: UIViewController {
-
+    
     @IBOutlet weak var dnsAddress: UITextField!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
         self.installDummyVPN()
     }
 
@@ -25,8 +27,8 @@ class ViewController: UIViewController {
     }
 
     func installDummyVPN() {
-        let manager = NEVPNManager.sharedManager()
-        manager.loadFromPreferencesWithCompletionHandler { error in
+        let manager = NEVPNManager.shared()
+        manager.loadFromPreferences { error in
             if let saveError = error {
                 NSLog("Error in loading preferences : \(saveError)")
                 return
@@ -34,12 +36,17 @@ class ViewController: UIViewController {
             
             if manager.protocolConfiguration == nil {
                 let newIPSec = NEVPNProtocolIPSec()
+                newIPSec.username = "Yathish"
                 newIPSec.serverAddress = "127.0.0.1"
+                newIPSec.passwordReference = self.getPersistanceRef()
+                newIPSec.authenticationMethod = NEVPNIKEAuthenticationMethod.sharedSecret
+                newIPSec.sharedSecretReference = self.getPersistanceRef()
+                newIPSec.useExtendedAuthentication = true
                 
                 manager.protocolConfiguration = newIPSec
-                manager.enabled = true
+                manager.localizedDescription = "Add DNS"
                 
-                manager.saveToPreferencesWithCompletionHandler({ error in
+                manager.saveToPreferences(completionHandler: { error in
                     if let saveError = error {
                         NSLog("Error in saving preferences : \(saveError)")
                         return
@@ -52,12 +59,35 @@ class ViewController: UIViewController {
         }
     }
     
-    @IBAction func addDNSEntry(sender: AnyObject) {
+    func getPersistanceRef() -> Data? {
+
+        guard let passwordData = "Password".data(using: String.Encoding.utf8) else { return nil }
+        var status = errSecSuccess
+        
+        let attributes: [AnyHashable: Any] = [
+            kSecAttrService as AnyHashable : UUID().uuidString as AnyObject,
+            kSecValueData as AnyHashable : passwordData as AnyObject,
+            kSecAttrAccessible as AnyHashable : kSecAttrAccessibleAlways,
+            kSecClass as AnyHashable : kSecClassGenericPassword,
+            kSecReturnPersistentRef as AnyHashable : kCFBooleanTrue
+        ]
+        
+        var result: AnyObject?
+        status = SecItemAdd(attributes as CFDictionary, &result)
+        
+        if let newPersistentReference = result as? Data , status == errSecSuccess {
+            return newPersistentReference
+        }
+        
+        return nil
+    }
+    
+    @IBAction func addDNSEntry(_ sender: AnyObject) {
         
         let dns = dnsAddress.text!
         
-        let manager = NEVPNManager.sharedManager()
-        manager.loadFromPreferencesWithCompletionHandler { error in
+        let manager = NEVPNManager.shared()
+        manager.loadFromPreferences { error in
             if let saveError = error {
                 NSLog("Error in loading preferences : \(saveError)")
                 return
@@ -65,15 +95,21 @@ class ViewController: UIViewController {
             
             if manager.protocolConfiguration != nil {
                 
-                // Create an OnDemandRule to connect for the array of DNS addresses
-                let onDemandRule = NEOnDemandRuleConnect()
-                onDemandRule.DNSServerAddressMatch = [dns]
-                onDemandRule.interfaceTypeMatch = NEOnDemandRuleInterfaceType.Any   // Rule is applicable to all types of interfaces (WiFI/Cellular)
+                let onDemandRule = NEOnDemandRuleEvaluateConnection()
+                let evaluationRule = NEEvaluateConnectionRule(matchDomains: ["*.com"], andAction: .connectIfNeeded)
+                evaluationRule.useDNSServers = [dns]
                 
+                onDemandRule.connectionRules = [evaluationRule]
+                onDemandRule.interfaceTypeMatch = NEOnDemandRuleInterfaceType.any   // Rule is applicable to all types of interfaces (WiFI/Cellular)
+
                 manager.onDemandRules = [onDemandRule]
-                manager.onDemandEnabled = true
+                manager.isOnDemandEnabled = true
+                manager.isEnabled = true
                 
-                manager.saveToPreferencesWithCompletionHandler({ (error) in
+                NSLog("manager >>> %@", manager)
+                print("manager >>> \(manager)")
+                
+                manager.saveToPreferences(completionHandler: { (error) in
                     if let saveError = error {
                         NSLog("Error in saving the OnDemandRules : \(saveError)")
                         return
@@ -81,10 +117,10 @@ class ViewController: UIViewController {
                     
                     NSLog("DNS address \(dns) added to OnDemand Rule : \(onDemandRule)")
                     
-                    let alertVC = UIAlertController(title: "Success", message: "DNS address \"\(dns)\" added to WiFi/Cellular settings", preferredStyle: UIAlertControllerStyle.Alert)
-                    let okButton = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil)
+                    let alertVC = UIAlertController(title: "Success", message: "DNS address \"\(dns)\" added to WiFi/Cellular settings", preferredStyle: UIAlertControllerStyle.alert)
+                    let okButton = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
                     alertVC.addAction(okButton)
-                    self.presentViewController(alertVC, animated: true, completion: nil)
+                    self.present(alertVC, animated: true, completion: nil)
                 })
             }
         }

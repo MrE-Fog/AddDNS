@@ -14,7 +14,21 @@
 		B27A54E31E2B7E8300D085AF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B27A54E11E2B7E8300D085AF /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		B246170F1E39D0BF000AE32F /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		B24616F81E37ADA4000AE32F /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		B27A54D51E2B7E8300D085AF /* AddDNS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AddDNS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B27A54D81E2B7E8300D085AF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B27A54DA1E2B7E8300D085AF /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -38,6 +52,7 @@
 		B27A54CC1E2B7E8300D085AF = {
 			isa = PBXGroup;
 			children = (
+				B24616F81E37ADA4000AE32F /* Security.framework */,
 				B27A54D71E2B7E8300D085AF /* AddDNS */,
 				B27A54D61E2B7E8300D085AF /* Products */,
 			);
@@ -74,6 +89,7 @@
 				B27A54D11E2B7E8300D085AF /* Sources */,
 				B27A54D21E2B7E8300D085AF /* Frameworks */,
 				B27A54D31E2B7E8300D085AF /* Resources */,
+				B246170F1E39D0BF000AE32F /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
@@ -96,6 +112,7 @@
 				TargetAttributes = {
 					B27A54D41E2B7E8300D085AF = {
 						CreatedOnToolsVersion = 7.3;
+						LastSwiftMigration = 0800;
 					};
 				};
 			};
@@ -251,10 +268,19 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Yathish Murthy (K6G5KW4WY8)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Yathish Murthy (K6G5KW4WY8)";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = AddDNS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = yathish.AddDNS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "ba877ec8-af14-4f1b-b55d-93bd483544cc";
+				PROVISIONING_PROFILE_SPECIFIER = "Pulse Secure Development 2";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -262,10 +288,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Yathish Murthy (K6G5KW4WY8)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Yathish Murthy (K6G5KW4WY8)";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = AddDNS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = yathish.AddDNS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "ba877ec8-af14-4f1b-b55d-93bd483544cc";
+				PROVISIONING_PROFILE_SPECIFIER = "Pulse Secure Development 2";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -288,6 +322,7 @@
 				B27A54E91E2B7E8300D085AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
